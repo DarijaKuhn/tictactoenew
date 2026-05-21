@@ -3,137 +3,173 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Tic Tac Toe — Игра</title>
+  <title>Tic Tac Toe — Дария Кюн</title>
   <style>
     :root{
-      --bg:#071022;
-      --card: rgba(255,255,255,0.03);
-      --accent1:#7c5cff;
-      --accent2:#2fb6ff;
-      --muted:#9aa6c1;
-      --win:#ffd36b;
-      --x-color:#ffd36b;
-      --o-color:#7ee7ff;
+      --overlay: rgba(2,8,20,0.62);
+      --panel: rgba(255,255,255,0.04);
+      --accent1: #7c5cff;
+      --accent2: #2fb6ff;
+      --muted: #b7c4d8;
+      --win: #ffd36b;
+      --x-color: #ffd36b;
+      --o-color: #7ee7ff;
+      --glass-border: rgba(255,255,255,0.06);
     }
+
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-      background: radial-gradient(800px 400px at 10% 10%, rgba(47,182,255,0.06), transparent 6%),
-                  linear-gradient(180deg,var(--bg), #041020);
-      color:#eef6ff;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      /* фон: ваша фотография + затемнённый оверлей для читаемости текста */
+      background:
+        linear-gradient(var(--overlay), var(--overlay)),
+        url('background.jpg') center/cover no-repeat;
+      color: #eef6ff;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
       display:flex;
       align-items:center;
       justify-content:center;
       padding:28px;
     }
 
-    .wrap{ width:100%; max-width:980px; display:grid; grid-template-columns:360px 1fr; gap:28px; }
+    /* Основная сетка */
+    .wrap{
+      width:100%;
+      max-width:980px;
+      display:grid;
+      grid-template-columns: 360px 1fr;
+      gap:28px;
+    }
     @media (max-width:900px){ .wrap{ grid-template-columns: 1fr; padding:12px } }
 
-    .panel{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    /* левые настройки / профиль */
+    .panel {
+      background: var(--panel);
+      border-radius:14px;
+      padding:20px;
+      border:1px solid var(--glass-border);
+      box-shadow: 0 12px 40px rgba(3,8,20,0.6);
     }
 
-    /* left panel */
-    .profile .avatar{ width:100px;height:100px;border-radius:16px;background:linear-gradient(90deg,var(--accent1),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#041025;font-size:28px;margin-bottom:12px }
-    .profile h2{ margin:0;font-size:18px }
-    .profile p{ color:var(--muted); font-size:14px; margin-top:8px }
+    .profile { text-align:center }
+    .avatar{ width:96px;height:96px;border-radius:14px;margin:0 auto 12px; display:flex;align-items:center;justify-content:center;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#041025; font-weight:800; font-size:28px; }
+    .profile h2{ margin:0; font-size:18px }
+    .profile p{ margin:8px 0 0; color:var(--muted); font-size:14px }
 
-    .options{ margin-top:16px; display:flex;flex-direction:column; gap:10px }
-    .row{ display:flex;gap:8px; align-items:center }
-    label{ font-size:13px; color:var(--muted) }
-
-    .select, .toggle{
-      padding:10px;border-radius:10px;background:transparent;border:1px solid rgba(255,255,255,0.03); color:#eaf5ff; font-weight:700; cursor:pointer;
+    .options{ margin-top:14px; display:flex;flex-direction:column; gap:10px }
+    label{ color:var(--muted); font-size:13px; margin-right:8px; }
+    .select, .btn, .btn-ghost {
+      padding:10px 12px; border-radius:10px; border: none; cursor:pointer; font-weight:700;
+      background: linear-gradient(90deg,var(--accent1),var(--accent2)); color:#041025;
+      box-shadow: 0 10px 30px rgba(92,72,255,0.14);
     }
+    .btn-ghost{ background:transparent; border:1px solid rgba(255,255,255,0.03); color:var(--muted); box-shadow:none; font-weight:600 }
 
-    .btn-primary{
-      margin-top:12px;padding:10px 14px;border-radius:12px;background:linear-gradient(90deg,var(--accent1),var(--accent2)); color:#041025;font-weight:800;border:0; cursor:pointer; box-shadow:0 10px 30px rgba(92,72,255,0.16)
-    }
+    .select { background:transparent; color: #eaf6ff; border:1px solid rgba(255,255,255,0.03); font-weight:700 }
 
-    /* board area */
-    .game{
-      display:flex;flex-direction:column;align-items:center;gap:12px;
-    }
-    .header{ width:100%; display:flex;justify-content:space-between; align-items:center }
-    .title{ font-size:20px; margin:0 }
-    .subtitle{ color:var(--muted); font-size:13px }
+    /* игровая панель справа */
+    .game-panel{ display:flex; flex-direction:column; gap:12px; align-items:center; padding:22px; border-radius:14px; background:var(--panel); border:1px solid var(--glass-border); box-shadow: 0 12px 40px rgba(3,8,20,0.6); }
+
+    .header{ width:100%; display:flex; justify-content:space-between; align-items:center; gap:12px; }
+    .title{ margin:0; font-size:20px; font-weight:800 }
+    .subtitle{ margin:0; color:var(--muted); font-size:13px }
 
     .controls{ display:flex; gap:10px; align-items:center }
-    .turn{ font-weight:700; padding:8px 10px; border-radius:10px; background: linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent }
+    .turn { font-weight:800; padding:8px 10px; border-radius:8px; color:#fff; background: linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent }
 
-    .board-wrap{ position:relative; }
+    /* игровое поле */
+    .board-wrap{ position:relative; width:100%; display:flex; align-items:center; justify-content:center; margin-top:6px }
     .board{
-      display:grid; grid-template-columns:repeat(3,1fr); gap:12px; padding:14px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); border-radius:14px; width:100%; max-width:520px;
+      display:grid; grid-template-columns: repeat(3, 1fr); gap:12px;
+      width:100%; max-width:480px; padding:16px;
+      border-radius:12px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border:1px solid rgba(255,255,255,0.02);
+      box-shadow: 0 14px 40px rgba(3,8,20,0.5);
     }
+
     .cell{
-      height:110px;border-radius:12px;background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
-      display:flex;align-items:center;justify-content:center;font-size:48px;font-weight:800;color:#fff; cursor:pointer; user-select:none; transition:transform .12s ease, box-shadow .12s ease;
-      border:1px solid rgba(255,255,255,0.02); position:relative;
+      height:110px; border-radius:10px;
+      background: rgba(255,255,255,0.02);
+      display:flex; align-items:center; justify-content:center;
+      font-size:48px; font-weight:900; color:#fff; cursor:pointer; user-select:none;
+      transition: transform .12s cubic-bezier(.2,.9,.2,1), box-shadow .12s ease, background .12s ease;
+      border:1px solid rgba(255,255,255,0.02);
+      position:relative;
     }
-    .cell:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(2,6,23,0.5) }
-    .cell.x{ color:var(--x-color); text-shadow: 0 6px 18px rgba(255,211,107,0.08) }
-    .cell.o{ color:var(--o-color); text-shadow: 0 6px 18px rgba(46,238,255,0.06) }
-    .cell.win{ transform: scale(1.06); box-shadow: 0 20px 60px rgba(124,92,255,0.12) }
+    .cell:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(2,6,23,0.45); }
+    .cell:active{ transform: translateY(-2px) }
+    .cell.x{ color: var(--x-color); text-shadow: 0 6px 18px rgba(255,211,107,0.08) }
+    .cell.o{ color: var(--o-color); text-shadow: 0 6px 18px rgba(46,238,255,0.06) }
+    .cell.disabled{ cursor:default; opacity:0.9 }
 
-    .win-overlay{ position:absolute; inset:0; pointer-events:none; overflow:visible }
-    .win-path{ stroke: var(--win); stroke-width:3.5; stroke-linecap:round; fill:none; stroke-dasharray:200; stroke-dashoffset:200; transition: stroke-dashoffset 650ms cubic-bezier(.2,.9,.2,1), opacity .2s ease; opacity:0; filter: drop-shadow(0 8px 24px rgba(124,92,255,0.12)); }
-    .win-overlay.show .win-path{ stroke-dashoffset:0; opacity:1 }
+    .cell.win{ transform: scale(1.06); box-shadow: 0 22px 60px rgba(124,92,255,0.14); }
 
-    .confetti-root{ position:absolute; inset:0; pointer-events:none; overflow:visible }
-    .confetti-dot{ position:absolute; width:10px;height:10px;border-radius:50%; transform:translateY(0) scale(.6); opacity:0; transition: transform .9s cubic-bezier(.16,.8,.2,1), opacity .6s ease; }
-    .confetti-dot.show{ opacity:1 }
+    /* overlay для линии победы */
+    .win-overlay{ position:absolute; inset:0; pointer-events:none; overflow:visible; }
+    .win-path{
+      stroke: var(--win); stroke-width:4; stroke-linecap:round; stroke-linejoin:round; fill:none;
+      stroke-dasharray:200; stroke-dashoffset:200; opacity:0;
+      filter: drop-shadow(0 8px 26px rgba(124,92,255,0.12));
+      transition: stroke-dashoffset 650ms cubic-bezier(.2,.9,.2,1), opacity .2s ease;
+    }
+    .win-overlay.show .win-path{ stroke-dashoffset:0; opacity:1; }
 
-    .info{ min-height:26px; color:var(--muted); font-weight:700; margin-top:6px; text-align:center }
+    /* confetti */
+    .confetti-root{ position:absolute; inset:0; pointer-events:none; overflow:visible; }
+    .confetti-dot{ position:absolute; width:10px; height:10px; border-radius:50%; transform:translateY(0) scale(.6); opacity:0; transition: transform .9s cubic-bezier(.16,.8,.2,1), opacity .6s ease; }
+    .confetti-dot.show{ opacity:1; }
 
-    .scoreboard{ display:flex; gap:12px; margin-top:6px }
-    .scorebox{ padding:8px 10px; border-radius:10px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02) }
-    .scorebox .label{ color:var(--muted); font-size:12px } .scorebox .value{ font-weight:800; margin-top:4px; font-size:18px }
+    .info{ min-height:24px; color:var(--muted); font-weight:700; margin-top:6px; text-align:center }
 
-    footer{ color:var(--muted); text-align:center; margin-top:8px }
-    @media (max-width:900px){ .wrap{ grid-template-columns: 1fr } .board{ max-width:100% } .cell{ height:86px; font-size:36px } }
+    .scorebar{ display:flex; gap:10px; margin-top:10px; }
+    .scorebox{ padding:8px 10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02); color: #fff; }
+    .scorebox .label{ color:var(--muted); font-size:12px } .scorebox .value{ font-weight:900; font-size:18px }
+
+    footer{ margin-top:10px; color:var(--muted); font-size:13px; text-align:center }
+
+    @media (max-width:720px){
+      .board{ gap:8px; padding:10px } .cell{ height:86px; font-size:36px }
+    }
   </style>
 </head>
 <body>
   <div class="wrap" role="main" aria-labelledby="title">
+    <!-- левый блок -->
     <aside class="panel profile" aria-label="Панель настроек">
-      <div style="text-align:center">
+      <div class="profile">
         <div class="avatar">ДК</div>
         <h2>Дария Кюн</h2>
-        <p>Игровая страница — выберите режим и уровень, затем нажмите «Новая игра».</p>
+        <p>Выберите режим. В режиме AI выберите сложность и нажмите "Новая игра".</p>
       </div>
 
       <div class="options">
-        <div class="row">
+        <div style="display:flex;gap:8px;align-items:center">
           <label for="mode">Режим:</label>
-          <select id="mode" class="select" title="Выбрать режим">
+          <select id="mode" class="select" aria-label="Режим игры">
             <option value="local">Два игрока (локально)</option>
             <option value="ai">Играть против компьютера</option>
           </select>
         </div>
 
-        <div class="row" id="aiOptions" style="display:flex;align-items:center;gap:8px">
+        <div style="display:flex;gap:8px;align-items:center" id="aiOptions">
           <label for="difficulty">Сложность:</label>
-          <select id="difficulty" class="select" title="Уровень AI">
+          <select id="difficulty" class="select" aria-label="Сложность AI">
             <option value="easy">Easy (рандом)</option>
             <option value="medium">Medium (блок/выигрыш)</option>
             <option value="hard">Hard (Minimax)</option>
           </select>
         </div>
 
-        <button id="newGame" class="btn-primary">Новая игра</button>
+        <button id="newGame" class="btn" title="Новая игра">Новая игра</button>
+        <button id="resetAll" class="btn-ghost" title="Сбросить счёт и настройки">Сбросить всё</button>
 
-        <div style="margin-top:8px; display:flex; gap:8px;">
-          <button id="clearStorage" class="select">Сбросить счёт и настройки</button>
-        </div>
-
-        <div style="margin-top:14px">
-          <div class="scoreboard">
+        <div style="margin-top:10px">
+          <div class="scorebar">
             <div class="scorebox"><div class="label">Вы (X)</div><div id="scoreX" class="value">0</div></div>
             <div class="scorebox"><div class="label">Компьютер (O)</div><div id="scoreO" class="value">0</div></div>
             <div class="scorebox"><div class="label">Ничьи</div><div id="scoreD" class="value">0</div></div>
@@ -142,20 +178,21 @@
       </div>
     </aside>
 
-    <section class="panel game" aria-label="Игровая панель">
-      <div class="header">
+    <!-- правый игровой блок -->
+    <section class="game-panel" aria-label="Игровая панель">
+      <div class="header" id="title">
         <div>
           <h3 class="title">Tic‑Tac‑Toe</h3>
-          <div class="subtitle">Классическая игра — X ходит первым</div>
+          <div class="subtitle">X начинает</div>
         </div>
         <div class="controls">
           <div id="turn" class="turn">Ход: X</div>
         </div>
       </div>
 
-      <div class="board-wrap" aria-hidden="false">
+      <div class="board-wrap">
         <div id="board" class="board" role="grid" aria-label="Игровое поле">
-          <!-- клетки генерируются скриптом при инициализации, но добавлены также сюда для доступности -->
+          <!-- клетки: индекс в data-index -->
           <div class="cell" data-index="0" role="button" tabindex="0" aria-label="Клетка 1"></div>
           <div class="cell" data-index="1" role="button" tabindex="0" aria-label="Клетка 2"></div>
           <div class="cell" data-index="2" role="button" tabindex="0" aria-label="Клетка 3"></div>
@@ -180,13 +217,14 @@
 
       <div id="info" class="info" aria-live="polite"></div>
 
-      <footer style="width:100%;text-align:center;margin-top:8px;color:var(--muted)"><a href="../index.html" style="color:var(--muted);text-decoration:underline">← Вернуться на стартовую страницу</a></footer>
+      <footer><a href="../index.html" style="color:var(--muted);text-decoration:underline">← Вернуться на стартовую страницу</a></footer>
     </section>
   </div>
 
   <script>
+    // Игровая логика + AI (easy/medium/hard) — все в одном коде.
     (function(){
-      // DOM
+      // DOM элементы
       const boardEl = document.getElementById('board');
       const cells = Array.from(document.querySelectorAll('.cell'));
       const turnEl = document.getElementById('turn');
@@ -194,7 +232,7 @@
       const modeSelect = document.getElementById('mode');
       const difficultySelect = document.getElementById('difficulty');
       const aiOptions = document.getElementById('aiOptions');
-      const clearStorageBtn = document.getElementById('clearStorage');
+      const resetAllBtn = document.getElementById('resetAll');
       const infoEl = document.getElementById('info');
       const scoreXEl = document.getElementById('scoreX');
       const scoreOEl = document.getElementById('scoreO');
@@ -203,19 +241,17 @@
       const winPath = document.getElementById('winPath');
       const confettiRoot = document.getElementById('confettiRoot');
 
-      // State
+      // состояние
       let board = Array(9).fill(null);
       let current = 'X';
       let finished = false;
       let scoreX = 0, scoreO = 0, scoreD = 0;
 
-      // load saved
+      // загрузка из localStorage
       const saved = JSON.parse(localStorage.getItem('ttt_scores') || 'null');
-      if (saved) { scoreX=saved.x||0; scoreO=saved.o||0; scoreD=saved.d||0; updateScores(); }
-      const savedMode = localStorage.getItem('ttt_mode');
-      if (savedMode) modeSelect.value = savedMode;
-      const savedDiff = localStorage.getItem('ttt_diff');
-      if (savedDiff) difficultySelect.value = savedDiff;
+      if (saved) { scoreX = saved.x||0; scoreO = saved.o||0; scoreD = saved.d||0; updateScores(); }
+      const savedMode = localStorage.getItem('ttt_mode'); if (savedMode) modeSelect.value = savedMode;
+      const savedDiff = localStorage.getItem('ttt_diff'); if (savedDiff) difficultySelect.value = savedDiff;
       toggleAIOptions();
 
       const winningLines = [
@@ -224,25 +260,24 @@
         [0,4,8],[2,4,6]
       ];
 
-      // render
+      // рендер
       function render(){
         cells.forEach((c,i) => {
           c.textContent = board[i] || '';
-          c.classList.toggle('x', board[i]==='X');
-          c.classList.toggle('o', board[i]==='O');
-          if (board[i]) c.classList.add('disabled'); else c.classList.remove('disabled');
+          c.classList.toggle('x', board[i] === 'X');
+          c.classList.toggle('o', board[i] === 'O');
+          c.classList.toggle('disabled', !!board[i] || finished);
           c.classList.remove('win');
         });
         turnEl.textContent = 'Ход: ' + current;
-        infoEl.textContent = '';
       }
 
-      function checkWinState(){
+      function checkWinState(b = board){
         for (const line of winningLines){
-          const [a,b,c] = line;
-          if (board[a] && board[a] === board[b] && board[a] === board[c]) return { winner: board[a], line };
+          const [a,b1,c] = line;
+          if (b[a] && b[a] === b[b1] && b[a] === b[c]) return { winner: b[a], line };
         }
-        if (board.every(Boolean)) return { draw: true };
+        if (b.every(Boolean)) return { draw: true };
         return null;
       }
 
@@ -250,7 +285,7 @@
         if (finished) return;
         const idx = Number(e.currentTarget.dataset.index);
         if (board[idx]) return;
-        // If mode is AI and it's AI's turn, ignore clicks
+        // если AI и сейчас ход компьютера — запрещаем клики
         if (modeSelect.value === 'ai' && current === 'O') return;
         board[idx] = current;
         afterMove();
@@ -263,37 +298,34 @@
           if (res.winner){
             res.line.forEach(i => cells[i].classList.add('win'));
             infoEl.textContent = 'Победил ' + res.winner + '!';
-            if (res.winner === 'X') { scoreX++; } else { scoreO++; }
-            saveScores();
-            updateScores();
+            if (res.winner === 'X') scoreX++; else scoreO++;
+            saveScores(); updateScores();
             animateWinLine(res.line);
-          } else if (res.draw){
+          } else {
             infoEl.textContent = 'Ничья!';
-            scoreD++;
-            saveScores();
-            updateScores();
-            flashDraw();
+            scoreD++; saveScores(); updateScores(); flashDraw();
           }
           cells.forEach(c => c.classList.add('disabled'));
         } else {
           current = current === 'X' ? 'O' : 'X';
           render();
-          // если режим AI и теперь ход компьютера — запустить ход AI
+          // если режим AI и сейчас ход O — AI должен походить
           if (!finished && modeSelect.value === 'ai' && current === 'O'){
-            setTimeout(aiMove, 320);
+            setTimeout(aiMove, 300);
           }
         }
         render();
       }
 
-      // AI implementations
+      // AI реализации
       function aiMove(){
         const diff = difficultySelect.value;
         let idx = null;
         if (diff === 'easy') idx = aiRandom();
         else if (diff === 'medium') idx = aiMedium();
-        else idx = aiHard(); // minimax
-        if (idx === null) { idx = aiRandom(); }
+        else idx = aiHard();
+        if (idx === null) idx = aiRandom();
+        // Применяем ход
         board[idx] = 'O';
         afterMove();
       }
@@ -305,33 +337,34 @@
       }
 
       function aiMedium(){
-        // 1) win if possible
+        // 1) выиграть если можно
         for (let i=0;i<9;i++){
           if (!board[i]){
-            board[i]='O';
-            if (checkWinState() && checkWinState().winner === 'O'){ board[i]=null; return i; }
-            board[i]=null;
+            board[i] = 'O';
+            const s = checkWinState(board);
+            board[i] = null;
+            if (s && s.winner === 'O') return i;
           }
         }
-        // 2) block player immediate win
+        // 2) блок игрока
         for (let i=0;i<9;i++){
           if (!board[i]){
-            board[i]='X';
-            if (checkWinState() && checkWinState().winner === 'X'){ board[i]=null; return i; }
-            board[i]=null;
+            board[i] = 'X';
+            const s = checkWinState(board);
+            board[i] = null;
+            if (s && s.winner === 'X') return i;
           }
         }
-        // 3) take center
+        // 3) центр
         if (!board[4]) return 4;
-        // 4) take a corner
+        // 4) угол
         const corners = [0,2,6,8].filter(i=>!board[i]);
         if (corners.length) return corners[Math.floor(Math.random()*corners.length)];
-        // 5) random
+        // 5) рандом
         return aiRandom();
       }
 
       function aiHard(){
-        // minimax: returns best index for 'O'
         const best = minimax(board.slice(), 'O', 0);
         return best.index;
       }
@@ -356,11 +389,9 @@
 
         let bestMove;
         if (player === 'O'){
-          // maximize
           let bestScore = -Infinity;
           for (const m of moves) if (m.score > bestScore){ bestScore = m.score; bestMove = m; }
         } else {
-          // minimize
           let bestScore = Infinity;
           for (const m of moves) if (m.score < bestScore){ bestScore = m.score; bestMove = m; }
         }
@@ -376,7 +407,7 @@
         return null;
       }
 
-      // UI helpers
+      // UI: анимация линии и конфетти
       function animateWinLine(line){
         const rectBoard = boardEl.getBoundingClientRect();
         const centers = cells.map(c => {
@@ -390,6 +421,7 @@
         const ey = (end.y / rectBoard.height) * 100;
         const d = `M ${sx} ${sy} L ${ex} ${ey}`;
         winPath.setAttribute('d', d);
+
         winOverlay.classList.remove('show');
         winPath.style.transition = 'none';
         winPath.style.strokeDasharray = '200';
@@ -401,6 +433,7 @@
             winPath.style.strokeDashoffset = '0';
           });
         });
+
         spawnConfetti(line);
         setTimeout(()=> setTimeout(clearWinOverlay, 1200), 900);
       }
@@ -408,7 +441,7 @@
       function clearWinOverlay(){
         winOverlay.classList.remove('show');
         winPath.style.transition = 'none';
-        winPath.setAttribute('d','');
+        winPath.setAttribute('d', '');
         confettiRoot.innerHTML = '';
       }
 
@@ -420,7 +453,7 @@
         const cx = ((midRect.left + midRect.right)/2) - parentRect.left;
         const cy = ((midRect.top + midRect.bottom)/2) - parentRect.top;
         const colors = ['#ffd36b','#7c5cff','#2fb6ff','#ff7ab6','#86f0ff'];
-        for (let i=0;i<14;i++){
+        for (let i=0;i<12;i++){
           const dot = document.createElement('div');
           dot.className = 'confetti-dot';
           dot.style.left = (cx - 5 + (Math.random()*40-20)) + 'px';
@@ -443,59 +476,65 @@
         });
       }
 
-      function updateScores(){
-        scoreXEl.textContent = scoreX;
-        scoreOEl.textContent = scoreO;
-        scoreDEl.textContent = scoreD;
-      }
+      // управление, сохранение
+      function updateScores(){ scoreXEl.textContent = scoreX; scoreOEl.textContent = scoreO; scoreDEl.textContent = scoreD; }
+      function saveScores(){ localStorage.setItem('ttt_scores', JSON.stringify({ x: scoreX, o: scoreO, d: scoreD })); }
 
-      function saveScores(){
-        localStorage.setItem('ttt_scores', JSON.stringify({ x: scoreX, o: scoreO, d: scoreD }));
-      }
-
-      // controls
-      function newGame(startFresh=false){
+      function newGame(startFresh = false){
         board = Array(9).fill(null);
         finished = false;
-        // If starting fresh (user pressed New Game), set who starts: X always
         current = 'X';
         clearWinOverlay();
         render();
-        if (modeSelect.value === 'ai' && current === 'O') setTimeout(aiMove, 250);
+        infoEl.textContent = '';
+        // Если режим AI и ход O — AI ходит (обычно X стартует, но на всякий случай)
+        if (!finished && modeSelect.value === 'ai' && current === 'O') setTimeout(aiMove, 250);
       }
 
-      // toggle AI options
       function toggleAIOptions(){
-        if (modeSelect.value === 'ai') aiOptions.style.display = 'flex';
-        else aiOptions.style.display = 'none';
+        aiOptions.style.display = modeSelect.value === 'ai' ? 'flex' : 'none';
         localStorage.setItem('ttt_mode', modeSelect.value);
       }
 
-      // events
-      cells.forEach(c => c.addEventListener('click', cellClick));
-      newGameBtn.addEventListener('click', ()=> { newGame(true); });
-      modeSelect.addEventListener('change', ()=> { toggleAIOptions(); localStorage.setItem('ttt_mode', modeSelect.value); });
+      // события
+      cells.forEach(c => {
+        c.addEventListener('click', cellClick);
+        c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.click(); } });
+      });
+
+      newGameBtn.addEventListener('click', ()=> newGame(true));
+      modeSelect.addEventListener('change', ()=> { toggleAIOptions(); localStorage.setItem('ttt_mode', modeSelect.value); newGame(true); });
       difficultySelect.addEventListener('change', ()=> { localStorage.setItem('ttt_diff', difficultySelect.value); });
-      clearStorageBtn.addEventListener('click', ()=> {
-        localStorage.removeItem('ttt_scores');
-        localStorage.removeItem('ttt_mode');
-        localStorage.removeItem('ttt_diff');
-        scoreX = scoreO = scoreD = 0;
-        updateScores();
-        modeSelect.value = 'local';
-        difficultySelect.value = 'easy';
-        toggleAIOptions();
-        infoEl.textContent = 'Сброшены настройки и счёт';
+      resetAllBtn.addEventListener('click', ()=> {
+        localStorage.removeItem('ttt_scores'); localStorage.removeItem('ttt_mode'); localStorage.removeItem('ttt_diff');
+        scoreX = scoreO = scoreD = 0; updateScores();
+        modeSelect.value = 'local'; difficultySelect.value = 'easy';
+        toggleAIOptions(); infoEl.textContent = 'Сброшены настройки и счёт';
         setTimeout(()=> infoEl.textContent = '', 1600);
+        newGame(true);
       });
 
-      // keyboard accessibility
-      document.addEventListener('keydown', (e)=>{
-        if (e.key === 'r' || e.key === 'R') newGame(true);
-      });
+      // клавиатурная подсказка: R — новая игра
+      document.addEventListener('keydown', (e)=> { if (e.key === 'r' || e.key === 'R') newGame(true); });
 
-      // initialize
+      // инициализация
       render();
+
+      // при ресайзе окна очищаем overlay (чтобы линия не была некорректной)
+      window.addEventListener('resize', clearWinOverlay);
+
+      // helper render вызов
+      function render(){
+        cells.forEach((c,i) => {
+          c.textContent = board[i] || '';
+          c.classList.toggle('x', board[i] === 'X');
+          c.classList.toggle('o', board[i] === 'O');
+          c.classList.toggle('disabled', !!board[i] || finished);
+          c.classList.remove('win');
+        });
+        turnEl.textContent = 'Ход: ' + current;
+      }
+
     })();
   </script>
 </body>
