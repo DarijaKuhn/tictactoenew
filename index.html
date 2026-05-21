@@ -18,7 +18,6 @@
       --radius: 14px;
     }
 
-    /* safe area for iPhone notch */
     html,body{height:100%}
     body{
       margin:0;
@@ -33,8 +32,8 @@
       display:flex;
       align-items:center;
       justify-content:center;
-      padding:20px;
-      touch-action: manipulation; /* улучшает отклик на сенсорных устройствах */
+      padding:16px;
+      touch-action: manipulation;
       -webkit-tap-highlight-color: rgba(255,255,255,0.04);
     }
 
@@ -75,39 +74,18 @@
     }
     .btn:active { transform: translateY(1px); }
 
-    /* --- Game view --- */
-    #gameView { display:none; }
-    .layout { display:flex; gap:22px; align-items:flex-start; }
-    @media (max-width:900px){ .layout{ flex-direction:column; } }
+    /* --- Game view (new layout: board top, controls bottom) --- */
+    #gameView { display:none; flex-direction:column; gap:18px; }
 
-    .left-panel { width:320px; min-width:220px; }
-    .options { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
-    .row { display:flex; gap:8px; align-items:center; }
-    label { color:var(--muted); font-size:13px; min-width:80px; }
-
-    .select {
-      padding:10px 12px; border-radius:10px; background:transparent; color:#eaf6ff;
-      border:1px solid rgba(255,255,255,0.03); font-weight:700; cursor:pointer; min-width:140px;
+    .game-top {
+      display:flex; flex-direction:column; gap:12px; align-items:center;
     }
-    .primary {
-      padding:10px 12px; border-radius:10px; background: linear-gradient(90deg,var(--accent1),var(--accent2));
-      color:#041025; font-weight:800; border:0; cursor:pointer; min-height:44px;
-      box-shadow:0 12px 36px rgba(92,72,255,0.14);
-    }
-    .ghost {
-      padding:9px 12px; border-radius:10px; background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); cursor:pointer;
-    }
-
-    .scorebar { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
-    .scorebox { padding:8px 10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02); color:#fff; }
-
-    .game-panel { display:flex; flex-direction:column; gap:12px; align-items:center; width:100%; }
 
     .header { width:100%; display:flex; justify-content:space-between; align-items:center; gap:12px; }
     .title { font-size:20px; font-weight:800; margin:0; }
     .turn { font-weight:900; padding:8px 10px; border-radius:8px; background: linear-gradient(90deg,var(--accent1),var(--accent2)); -webkit-background-clip:text; background-clip:text; color:transparent; min-width:86px; text-align:center; }
 
-    /* Board responsive: width adapts; cells keep square via aspect-ratio */
+    /* Board */
     .board-wrap { position:relative; width:100%; display:flex; justify-content:center; }
     .board {
       --board-size: min(88vw, 520px);
@@ -122,7 +100,7 @@
       box-shadow: 0 14px 40px rgba(3,8,20,0.5);
     }
     .cell {
-      aspect-ratio: 1 / 1; /* обеспечивает квадрат */
+      aspect-ratio: 1 / 1;
       border-radius:12px;
       background: rgba(255,255,255,0.02);
       display:flex; align-items:center; justify-content:center; font-size: clamp(24px, 5vw, 48px); font-weight:900; color:#fff;
@@ -147,15 +125,44 @@
     .confetti-dot { position:absolute; width:10px; height:10px; border-radius:50%; transform:translateY(0) scale(.6); opacity:0; transition: transform .9s cubic-bezier(.16,.8,.2,1), opacity .6s ease; }
     .confetti-dot.show { opacity:1; }
 
-    .info { min-height:24px; color:var(--muted); font-weight:700; margin-top:6px; text-align:center; }
+    .info { min-height:24px; color:var(--muted); font-weight:700; text-align:center; }
 
-    footer { margin-top:6px; color:var(--muted); font-size:13px; text-align:center; }
+    /* Game bottom: controls */
+    .game-bottom {
+      display:flex; flex-direction:column; gap:12px; align-items:center;
+    }
+
+    .options { width:100%; max-width:600px; display:flex; flex-direction:column; gap:10px; }
+    .row { display:flex; gap:8px; align-items:center; justify-content:center; flex-wrap:wrap; }
+    label { color:var(--muted); font-size:13px; min-width:80px; }
+
+    .select {
+      padding:10px 12px; border-radius:10px; background:transparent; color:#eaf6ff;
+      border:1px solid rgba(255,255,255,0.03); font-weight:700; cursor:pointer; min-width:140px;
+    }
+    .primary {
+      padding:10px 12px; border-radius:10px; background: linear-gradient(90deg,var(--accent1),var(--accent2));
+      color:#041025; font-weight:800; border:0; cursor:pointer; min-height:44px;
+      box-shadow:0 12px 36px rgba(92,72,255,0.14);
+    }
+    .ghost {
+      padding:9px 12px; border-radius:10px; background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.03); cursor:pointer;
+    }
+
+    .scorebar { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+    .scorebox { padding:8px 10px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005)); border:1px solid rgba(255,255,255,0.02); color:#fff; }
+
+    .bottom-buttons { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; width:100%; }
+
+    footer { margin-top:6px; color:var(--muted); font-size:12px; text-align:center; }
 
     @media (max-width:480px){
-      .left-w, .left-panel { width:100%; }
+      .left-w { width:100%; }
       .board { --board-size: min(96vw, 420px); }
       .avatar { width:84px; height:84px; font-size:26px; }
       .btn, .primary { min-height:48px; }
+      .row { gap:6px; }
+      .select { min-width:100px; }
     }
   </style>
 </head>
@@ -189,92 +196,81 @@
       </div>
     </div>
 
-    <!-- Game -->
+    <!-- Game (new layout: board top, controls bottom) -->
     <div id="gameView" class="card" style="margin-top:18px; display:none;">
-      <div class="layout">
-        <!-- left -->
-        <aside class="left-panel">
-          <div class="card" style="padding:14px;">
-            <div style="text-align:center">
-              <div class="avatar">ДК</div>
-              <h3 style="margin:8px 0 0">Дария Кюн</h3>
-              <p style="margin:6px 0 0; color:var(--muted)">Выберите режим и сложность, затем «Новая игра».</p>
-            </div>
-
-            <div class="options">
-              <div class="row">
-                <label for="mode">Режим:</label>
-                <select id="mode" class="select" aria-label="Режим игры">
-                  <option value="local">Два игрока (локально)</option>
-                  <option value="ai">Против компьютера</option>
-                </select>
-              </div>
-
-              <div class="row" id="aiOptions">
-                <label for="difficulty">Сложность:</label>
-                <select id="difficulty" class="select" aria-label="Сложность AI">
-                  <option value="easy">Easy</option>
-                  <option value="medium">Medium</option>
-                  <option value="hard">Hard</option>
-                </select>
-              </div>
-
-              <button id="newGame" class="primary">Новая игра</button>
-              <button id="resetAll" class="ghost">Сбросить всё</button>
-
-              <div class="scorebar">
-                <div class="scorebox"><div class="label">Вы (X)</div><div id="scoreX" class="value">0</div></div>
-                <div class="scorebox"><div class="label">Компьютер (O)</div><div id="scoreO" class="value">0</div></div>
-                <div class="scorebox"><div class="label">Ничьи</div><div id="scoreD" class="value">0</div></div>
-              </div>
-            </div>
-
-            <div style="text-align:center; margin-top:12px;">
-              <button id="backToWelcome" class="ghost">← Назад</button>
-            </div>
+      <!-- Game top: board + header + info -->
+      <div class="game-top">
+        <div class="header">
+          <div>
+            <h2 class="title">Tic‑Tac‑Toe</h2>
+            <div class="subtitle">X начинает</div>
           </div>
-        </aside>
+          <div class="controls">
+            <div id="turn" class="turn">Ход: X</div>
+          </div>
+        </div>
 
-        <!-- right / game panel -->
-        <section class="game-panel" style="flex:1;">
-          <div class="header">
-            <div>
-              <h2 class="title">Tic‑Tac‑Toe</h2>
-              <div class="subtitle">X начинает</div>
-            </div>
-            <div class="controls">
-              <div id="turn" class="turn">Ход: X</div>
-            </div>
+        <div class="board-wrap">
+          <div id="board" class="board" role="grid" aria-label="Игровая доска">
+            <div class="cell" data-index="0" role="button" tabindex="0" aria-label="Клетка 1"></div>
+            <div class="cell" data-index="1" role="button" tabindex="0" aria-label="Клетка 2"></div>
+            <div class="cell" data-index="2" role="button" tabindex="0" aria-label="Клетка 3"></div>
+
+            <div class="cell" data-index="3" role="button" tabindex="0" aria-label="Клетка 4"></div>
+            <div class="cell" data-index="4" role="button" tabindex="0" aria-label="Клетка 5"></div>
+            <div class="cell" data-index="5" role="button" tabindex="0" aria-label="Клетка 6"></div>
+
+            <div class="cell" data-index="6" role="button" tabindex="0" aria-label="Клетка 7"></div>
+            <div class="cell" data-index="7" role="button" tabindex="0" aria-label="Клетка 8"></div>
+            <div class="cell" data-index="8" role="button" tabindex="0" aria-label="Клетка 9"></div>
           </div>
 
-          <div class="board-wrap">
-            <div id="board" class="board" role="grid" aria-label="Игровая доска">
-              <div class="cell" data-index="0" role="button" tabindex="0" aria-label="Клетка 1"></div>
-              <div class="cell" data-index="1" role="button" tabindex="0" aria-label="Клетка 2"></div>
-              <div class="cell" data-index="2" role="button" tabindex="0" aria-label="Клетка 3"></div>
-
-              <div class="cell" data-index="3" role="button" tabindex="0" aria-label="Клетка 4"></div>
-              <div class="cell" data-index="4" role="button" tabindex="0" aria-label="Клетка 5"></div>
-              <div class="cell" data-index="5" role="button" tabindex="0" aria-label="Клетка 6"></div>
-
-              <div class="cell" data-index="6" role="button" tabindex="0" aria-label="Клетка 7"></div>
-              <div class="cell" data-index="7" role="button" tabindex="0" aria-label="Клетка 8"></div>
-              <div class="cell" data-index="8" role="button" tabindex="0" aria-label="Клетка 9"></div>
-            </div>
-
-            <div class="win-overlay" id="winOverlay" aria-hidden="true">
-              <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <path id="winPath" class="win-path" d="" />
-              </svg>
-            </div>
-
-            <div id="confettiRoot" class="confetti-root" aria-hidden="true"></div>
+          <div class="win-overlay" id="winOverlay" aria-hidden="true">
+            <svg viewBox="0 0 100 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="winPath" class="win-path" d="" />
+            </svg>
           </div>
 
-          <div id="info" class="info" aria-live="polite"></div>
+          <div id="confettiRoot" class="confetti-root" aria-hidden="true"></div>
+        </div>
 
-          <footer><small style="color:var(--muted)">Подсказка: R — новая игра. Касайтесь клеток для установки X / O.</small></footer>
-        </section>
+        <div id="info" class="info" aria-live="polite"></div>
+      </div>
+
+      <!-- Game bottom: controls -->
+      <div class="game-bottom">
+        <div class="options">
+          <div class="row">
+            <label for="mode">Режим:</label>
+            <select id="mode" class="select" aria-label="Режим игры">
+              <option value="local">Два игрока (локально)</option>
+              <option value="ai">Против компьютера</option>
+            </select>
+          </div>
+
+          <div class="row" id="aiOptions">
+            <label for="difficulty">Сложность:</label>
+            <select id="difficulty" class="select" aria-label="Сложность AI">
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="scorebar">
+          <div class="scorebox"><div class="label">Вы (X)</div><div id="scoreX" class="value">0</div></div>
+          <div class="scorebox"><div class="label">Компьютер (O)</div><div id="scoreO" class="value">0</div></div>
+          <div class="scorebox"><div class="label">Ничьи</div><div id="scoreD" class="value">0</div></div>
+        </div>
+
+        <div class="bottom-buttons">
+          <button id="newGame" class="primary">Новая игра</button>
+          <button id="resetAll" class="ghost">Сбросить</button>
+          <button id="backToWelcome" class="ghost">← Назад</button>
+        </div>
+
+        <footer><small>Подсказка: R — новая игра. Касайтесь клеток для установки X / O.</small></footer>
       </div>
     </div>
   </div>
@@ -328,8 +324,7 @@
       // View switching
       goGame.addEventListener('click', ()=> {
         welcome.style.display = 'none';
-        gameView.style.display = 'block';
-        // ensure controls visible on small devices
+        gameView.style.display = 'flex';
         setTimeout(()=> { newGameBtn.focus(); }, 120);
       });
       backToWelcome.addEventListener('click', ()=> {
@@ -368,11 +363,8 @@
         afterMove();
       }
 
-      // Attach both click and touch-friendly pointerdown for snappier mobile response
       cells.forEach(c => {
-        // click works everywhere
         c.addEventListener('click', cellClick);
-        // ensure keyboard activation
         c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); c.click(); } });
       });
 
@@ -400,7 +392,7 @@
         render();
       }
 
-      // AI implementations
+      // AI
       function aiMove(){
         const diff = difficultySelect.value;
         let idx = null;
@@ -467,7 +459,7 @@
         return null;
       }
 
-      // Winning visuals
+      // Win animation
       function animateWinLine(line){
         const rectBoard = boardEl.getBoundingClientRect();
         const centers = cells.map(c => {
@@ -531,7 +523,7 @@
         });
       }
 
-      // Scores / storage
+      // Scores
       function updateScores(){ scoreXEl.textContent = scoreX; scoreOEl.textContent = scoreO; scoreDEl.textContent = scoreD; }
       function saveScores(){ localStorage.setItem('ttt_scores', JSON.stringify({ x: scoreX, o: scoreO, d: scoreD })); }
 
